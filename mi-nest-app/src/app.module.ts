@@ -25,7 +25,7 @@ import { ProductsModule } from './modules/product/product.module';
       }),
     }),
     UsersModule, 
-    // AuthModule, 
+    AuthModule, 
     ProductsModule
   ],
   controllers: [AppController],
