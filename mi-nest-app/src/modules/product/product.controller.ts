@@ -1,7 +1,10 @@
 import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import { UseGuards } from '@nestjs/common';
+import { JwtAuthGuard } from '../auth/jwt.guard';
 import { ProductsService } from './product.service';
 import { CreateProductDTO } from 'src/dto/create-product.dto';
 import { UpdateProductDTO } from 'src/dto/update-product.dto';
+
 
 /**
  * Controlador encargado de manejar las peticiones HTTP relacionadas con productos.
@@ -26,6 +29,7 @@ export class ProductsController {
    * @param {string} id - ID del producto a buscar.
    */
   @Get(':id')
+   @UseGuards(JwtAuthGuard)
   encontrarUnoPorId(@Param('id') id: string) {
     return this.productsService.findOne(Number(id));
   }
@@ -36,6 +40,7 @@ export class ProductsController {
    * @param {CreateProductDTO} body - Datos del producto (sin ID).
    */
   @Post()
+   @UseGuards(JwtAuthGuard)
   crear(@Body() body: CreateProductDTO) {
     return this.productsService.create(body);
   }
@@ -47,6 +52,7 @@ export class ProductsController {
    * @param {UpdateProductDTO} body - Datos actualizados.
    */
   @Put(':id')
+  @UseGuards(JwtAuthGuard)
   actualizar(@Param('id') id: string, @Body() body: UpdateProductDTO) {
     return this.productsService.update(Number(id), body);
   }
@@ -57,6 +63,7 @@ export class ProductsController {
    * @param {string} id - ID del producto a eliminar.
    */
   @Delete(':id')
+  @UseGuards(JwtAuthGuard)
   borrar(@Param('id') id: string) {
     return this.productsService.remove(Number(id));
   }
