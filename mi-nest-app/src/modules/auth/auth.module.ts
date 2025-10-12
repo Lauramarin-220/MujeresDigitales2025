@@ -8,12 +8,38 @@ import { AuthController } from './auth.controller';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtStrategy } from './jwt.strategy';
 
-
+/**
+ * Módulo de autenticación del sistema.
+ * 
+ * Se encarga de gestionar el registro, login y validación de usuarios
+ * mediante el uso de JWT (JSON Web Tokens) y estrategias de Passport.
+ */
 @Module({
   imports: [
+    /** 
+     * ConfigModule:
+     * Permite acceder a variables de entorno de forma global.
+     */
     ConfigModule.forRoot({ isGlobal: true }),
+
+    /** 
+     * TypeOrmModule:
+     * Conecta la entidad User con el repositorio de TypeORM
+     * para realizar operaciones de base de datos.
+     */
     TypeOrmModule.forFeature([User]),
+
+    /** 
+     * PassportModule:
+     * Configura la estrategia predeterminada de autenticación 'jwt'.
+     */
     PassportModule.register({ defaultStrategy: 'jwt' }),
+
+    /** 
+     * JwtModule:
+     * Registra el módulo JWT de manera asíncrona usando variables de entorno.
+     * Se configura la clave secreta y el tiempo de expiración del token.
+     */
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -23,7 +49,11 @@ import { JwtStrategy } from './jwt.strategy';
       })
     })
   ],
+
+  /** Proveedores disponibles dentro del módulo */
   providers: [AuthService, JwtStrategy],
+
+  /** Controladores que manejan las rutas relacionadas a autenticación */
   controllers: [AuthController]
 })
 export class AuthModule { }

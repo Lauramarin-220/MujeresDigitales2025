@@ -5,6 +5,10 @@ import { Product } from 'src/entities/product.entity';
 import { CreateProductDTO } from 'src/dto/create-product.dto';
 import { UpdateProductDTO } from 'src/dto/update-product.dto';
 
+/**
+ * Servicio de productos.
+ * Permite crear, consultar, actualizar y desactivar productos.
+ */
 @Injectable()
 export class ProductsService {
   constructor(
@@ -12,23 +16,24 @@ export class ProductsService {
     private readonly productRepository: Repository<Product>,
   ) {}
 
-  // ✅ Obtener todos los productos
+  // ✅ Obtener todos los productos activos
   async findAll(): Promise<Product[]> {
-    return this.productRepository.find();
+    return this.productRepository.findBy({ status: true });
   }
 
-  // ✅ Buscar por ID
+  // ✅ Buscar producto por ID
   async findOne(id: number): Promise<Product> {
     const product = await this.productRepository.findOneBy({ id });
-    if (!product) throw new NotFoundException('Producto no encontrado');
+    if (!product) throw new NotFoundException("Producto no encontrado");
     return product;
   }
-  // ✅ Buscar por nombre
-    findByName(name: string) {
-        const productFind = this.productRepository.findOne({ where: { name }});
-        if (!productFind) throw new NotFoundException('Producto no encontrado');
-        return productFind;
-    }
+
+  // ✅ Buscar producto por nombre
+  async findByName(name: string): Promise<Product> {
+    const product = await this.productRepository.findOne({ where: { name } });
+    if (!product) throw new NotFoundException("Producto no encontrado");
+    return product;
+  }
 
   // ✅ Crear producto
   async create(data: CreateProductDTO): Promise<Product> {
@@ -43,12 +48,14 @@ export class ProductsService {
     return await this.productRepository.save(product);
   }
 
-  // ✅ Eliminar producto
-  async remove(id: number): Promise<{ message: string }> {
-    const result = await this.productRepository.delete(id);
-    if (result.affected === 0) {
-      throw new NotFoundException('Producto no encontrado');
-    }
-    return { message: `Producto con id ${id} eliminado` };
+  // ✅ Desactivar producto (status = false)
+  async disabled(id: number): Promise<{ message: string; product: Product }> {
+    const product = await this.findOne(id);
+    product.status = false;
+    await this.productRepository.save(product);
+    return {
+      message: `Producto ${id} desactivado correctamente`,
+      product,
+    };
   }
 }
