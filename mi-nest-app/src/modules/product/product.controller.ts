@@ -1,9 +1,11 @@
 import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
 import { UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/jwt.guard';
+import { ParseUpperTrimPipe } from 'src/common/Pipes/parse-uppertrim.pipe';
 import { ProductsService } from './product.service';
 import { CreateProductDTO } from 'src/dto/create-product.dto';
 import { UpdateProductDTO } from 'src/dto/update-product.dto';
+
 
 
 /**
@@ -33,6 +35,11 @@ export class ProductsController {
   encontrarUnoPorId(@Param('id') id: string) {
     return this.productsService.findOne(Number(id));
   }
+
+  @Get('by-name/:name') //La ruta es http://localhost:3000/products/by-name/perro
+    findByName(@Param('name', ParseUpperTrimPipe) name: string) {
+        return this.productsService.findByName(name);
+    }
 
   /**
    * POST /products

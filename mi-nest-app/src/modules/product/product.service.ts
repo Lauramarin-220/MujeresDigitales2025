@@ -23,6 +23,12 @@ export class ProductsService {
     if (!product) throw new NotFoundException('Producto no encontrado');
     return product;
   }
+  // ✅ Buscar por nombre
+    findByName(name: string) {
+        const productFind = this.productRepository.findOne({ where: { name }});
+        if (!productFind) throw new NotFoundException('Producto no encontrado');
+        return productFind;
+    }
 
   // ✅ Crear producto
   async create(data: CreateProductDTO): Promise<Product> {
